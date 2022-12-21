@@ -3,6 +3,7 @@ package com.springboot.controller;
 import com.springboot.FormatToJson.ToJsonData;
 import com.springboot.model.Kilometrage;
 import com.springboot.repository.kilometrageRepository;
+import com.springboot.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
@@ -19,10 +20,12 @@ import java.util.List;
 public class kilometrageController {
 
     private  kilometrageRepository kilometrageRepository;
+    private TokenService serve;
 
-    public kilometrageController(kilometrageRepository kilometrageRepository) {
+    public kilometrageController(kilometrageRepository kilometrageRepository, TokenService serve) {
         super();
         this.kilometrageRepository = kilometrageRepository;
+        this.serve = serve;
     }
 
     @GetMapping
@@ -59,13 +62,11 @@ public class kilometrageController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ToJsonData> getKilomById(@PathVariable int id) {
+    public ResponseEntity<ToJsonData> getKilomById(@PathVariable int id,@RequestParam("id") int idu,@RequestParam("token") String token) {
         System.out.println("number one");
         try {
+            serve.checkTokens(token,idu);
             List<Kilometrage> list = kilometrageRepository.findAllByIdavion(id);
-//            ArrayList<Kilometrage> list = new Kilometrage().selectAllById(id);
-//            List<Kilometrage> kilometrage = kilometrageRepository.findAllByIdvoitureOrderByDateAsc(id);
-//            List<Kilometrage> v = kilometrageRepository.searchKilometrageByIdvoiture(id);
             for (Kilometrage t:list) {
                 System.out.println(t.getFin()+" "+t.getDebut()+" date "+t.getDate());
             }
